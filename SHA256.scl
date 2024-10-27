@@ -20,8 +20,8 @@ VERSION : 0.1
          M : Array[0..15] of DWord;
       END_STRUCT;
       SxDataByteToBits AT SxDataBytes : Array[0..5119] of Bool;
-      SxLenDataBit : LInt;
-      SxLenDataBitToArray AT SxLenDataBit : Array[0..63] of Bool;
+      SxLenDataBit : DInt;
+      SxLenDataBitToArray AT SxLenDataBit : Array[0..31] of Bool;
       TxK : DInt;
       TxNumberChunks : DInt;
       Txi : DInt;
@@ -273,9 +273,14 @@ BEGIN
 	
 	REGION Step 02: Convert and save message in data as Bytes
 	    // reset data
-	    FILL_BLK(IN := 0, COUNT := 640, OUT => #SxDataBytes[0]);
+	    FILL_BLK(IN := 0,
+	             COUNT := 640,
+	             OUT => #SxDataBytes[0]);
 	    // save the number of Bytes filled in data in #TxLenData
-	    Strg_TO_Chars(Strg := #message, pChars := 0, Cnt => #TxLenData, Chars := #SxDataBytes);
+	    Strg_TO_Chars(Strg := #message,
+	                  pChars := 0,
+	                  Cnt => #TxLenData,
+	                  Chars := #SxDataBytes);
 	END_REGION
 	
 	REGION Step 03: Calculate number of chunks and append padding Bits 
@@ -288,19 +293,22 @@ BEGIN
 	    #SxLenDataBit := #TxLenData * 8;
 	    
 	    // calculate number of chunks
-	    #TxNumberChunks := CEIL_DINT(IN := (LINT_TO_REAL(IN := #SxLenDataBit) + 1.0 + 64.0) / 512.0);
+	    #TxNumberChunks := CEIL_DINT(IN := (DINT_TO_REAL(IN := #SxLenDataBit) + 1.0 + 64.0) / 512.0);
 	    
 	    // append "1"
 	    #SxDataBytes[#TxLenData].%X7 := True;
 	    
 	    // get the needed maximum size depending on actual amount of Bits + 64 Bits from message
-	    #TxK := LINT_TO_DINT(IN := 512 - ((#SxLenDataBit + 1 + 64) MOD 512));
+	    #TxK := 512 - ((#SxLenDataBit + 1 + 64) MOD 512);
 	END_REGION
 	
 	REGION Step 04: Append 64 Bit containg the original message length in Bits
 	    // 'Test' = 32 Bits --> B#2#00000000_00000000_00000000_00000000_00000000_00000000_00000000_01000000
-	    FOR #Txi := 0 TO 63 DO
-	        #SxDataByteToBits[(#Txi) + (LINT_TO_DINT(IN := #SxLenDataBit) + 1 + #TxK)] := #SxLenDataBitToArray[#Txi];
+	    FOR #Txi := 0 TO 31 DO
+	        #SxDataByteToBits[#Txi + #SxLenDataBit + 1 + #TxK] := False;
+	    END_FOR;
+	    FOR #Txi := 32 TO 63 DO
+	        #SxDataByteToBits[#Txi + #SxLenDataBit + 1 + #TxK] := #SxLenDataBitToArray[#Txi-32];
 	    END_FOR;
 	END_REGION
 	
@@ -317,7 +325,7 @@ BEGIN
 	        
 	        REGION Step 06: Extend chunk to 64 DWords
 	            FOR #Txi2 := 16 TO 63 DO
-	               
+	                
 	                #TxS0 := ROR_DWORD(IN := #TxMessageScheduleArray[#Txi2 - 15], N := 7) XOR
 	                ROR_DWORD(IN := #TxMessageScheduleArray[#Txi2 - 15], N := 18) XOR
 	                SHR_DWORD(IN := #TxMessageScheduleArray[#Txi2 - 15], N := 3);
@@ -417,8 +425,8 @@ BEGIN
 	            #TxHashValues.h7 := DINT_TO_DWORD(IN :=
 	                                              DWORD_TO_DINT(IN := #TxHashValues.h7) +
 	                                              DWORD_TO_DINT(IN := #TxWorkingVariables.h));
-	                                                   END_REGION
-	                                                   
+	        END_REGION
+	        
 	    END_FOR;
 	END_REGION
 	
