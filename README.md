@@ -3,7 +3,7 @@
 
 Sha256 is an cryptographic algorithm that takes a string of any length and reduces it to a unique fixed length string. 
 In this implmementation the string length is limited to a maximum length of 254 characters (String[254] - 2032 bit).
-The digest ouput is the final hash value as a string of H1 - H4 (20 bytes string).
+The digest ouput is the final hash value as a string of H0 - H4 (20 bytes string).
 The hexdigest output is the final hash value as a hexadecimal string of H1 - H4 (40 bytes string).
 	
     - Step 00: Initialize variables H0 - H7
