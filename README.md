@@ -16,7 +16,8 @@ The hash output is the final hash value as a hexadecimal string of H0 - H7 (64 b
         - Step 07: Initialize variables A - H
         - Step 08: Do some bitwise operations on the 64 chunk DWords
         - Step 09: Save the chunk's hash to result for the next chunk 
-    - Step 10: Produce the final hash value String
+    - Step 10: Produce "digest"
+    - Step 11: Produce "hexdigest"
 
   
 ![SHA256](https://github.com/marvin-mangold/S7-PLC_SHA256/assets/10088323/c362c0b6-dbf4-4990-ad74-942484a2f46d)
