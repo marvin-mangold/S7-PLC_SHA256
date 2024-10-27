@@ -11,7 +11,8 @@ VERSION : 0.1
    END_VAR
 
    VAR_OUTPUT 
-      hash : String;   // hashed message as hex
+      digest : String;   // hashed message as bytes
+      hexdigest : String;   // hashed message as hex
    END_VAR
 
    VAR_TEMP 
@@ -177,6 +178,9 @@ BEGIN
 	This in turn means that SHA256 is ideal for challenge hash authentication, finger-printing, password validation, 
 	digital signatures, uniquely identifying files, and as checksums to detect accidental data corruption.
 	
+	The digest ouput is the final hash value as a string of H0 - H7 (32 bytes string)
+	The hexdigest output is the final hash value as a hexadecimal string of H0 - H7 (64 bytes string)
+	
 	Step 00: Initialize variables H0 - H7
 	Step 01: Set constants
 	Step 02: Convert and save message in data as Bytes
@@ -188,7 +192,8 @@ BEGIN
 	    Step 07: Initialize variables A - H
 	    Step 08: Do some bitwise operations on the 64 chunk DWords
 	    Step 09: Save the chunk's hash to result for the next chunk 
-	Step 10: Produce the final hash value String
+	Step 10: Produce "digest"
+	Step 11: Produce "hexdigest"
 	====================================================================================================================    
 	*)
 	END_REGION
@@ -430,7 +435,62 @@ BEGIN
 	    END_FOR;
 	END_REGION
 	
-	REGION Step 10: Produce the final hash value String
+	REGION Step 10: Produce "digest"
+	    // the final hash value as a string of H0 - H7 (32 bytes string)
+	    // H0 = 16#A9_4A_8F_E5
+	    // H1 = 16#CC_B1_9B_A6
+	    // H2 = 16#1C_4C_08_73
+	    // H3 = 16#D3_91_E9_87
+	    // H4=  16#98_2F_BB_D3
+	    // H5 = 16#A9_4A_8F_E5
+	    // H6 = 16#CC_B1_9B_A6
+	    // H7 = 16#1C_4C_08_73
+	    // digest = '©J$8FåÌ±›¦$1CL$08sÓ‘é‡˜/»Ó©J$8FåÌ±›¦$1CL$08sÓ‘é‡˜/»Ó'
+	    // len(digest) = 32 bytes just the special chars destroy the readable live value
+	    
+	    #digest := CONCAT(IN1 := '', IN2 := BYTE_TO_CHAR(#TxHashValues.h0.%B3));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h0.%B2));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h0.%B1));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h0.%B0));
+	    
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h1.%B3));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h1.%B2));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h1.%B1));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h1.%B0));
+	    
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h2.%B3));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h2.%B2));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h2.%B1));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h2.%B0));
+	    
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h3.%B3));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h3.%B2));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h3.%B1));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h3.%B0));
+	    
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h4.%B3));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h4.%B2));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h4.%B1));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h4.%B0));
+	    
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h5.%B3));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h5.%B2));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h5.%B1));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h5.%B0));
+	    
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h6.%B3));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h6.%B2));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h6.%B1));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h6.%B0));
+	    
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h7.%B3));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h7.%B2));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h7.%B1));
+	    #digest := CONCAT(IN1 := #digest, IN2 := BYTE_TO_CHAR(#TxHashValues.h7.%B0));
+	    #counter := LEN(#digest);
+	END_REGION
+	
+	REGION Step 11: Produce "hexdigest"
 	    // the final hash value as a hexadecimal string of H0 - H7 (64 bytes string)
 	    // Example input 'Test'
 	    // H0 = 16#532E_AABD
@@ -474,7 +534,7 @@ BEGIN
 	    
 	    // turn uppercase letters to lowercase letters
 	    // 532eaabd9574880dbf76b9b8cc00832c20a6ec113d682299550d7a6e0f345e25
-	    #hash := '';
+	    #hexdigest := '';
 	    FOR #counter := 1 TO LEN(#result_uppercase) DO
 	        // check if actual char is A - F (A = 65, F = 70) and turn it to a - f (97 - 102)
 	        IF CHAR_TO_BYTE(#result_uppercase[#counter]) >= 65 AND CHAR_TO_BYTE(#result_uppercase[#counter]) <= 70 THEN
@@ -485,7 +545,7 @@ BEGIN
 	            #result_lowercase := CONCAT_STRING(IN1 := #result_lowercase, IN2 := #result_uppercase[#counter]);
 	        END_IF;
 	    END_FOR;
-	    #hash := #result_lowercase;
+	    #hexdigest := #result_lowercase;
 	END_REGION
 END_FUNCTION
 
