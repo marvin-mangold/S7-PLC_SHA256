@@ -10,13 +10,17 @@ This in turn means that SHA256 is ideal for challenge hash authentication, finge
 digital signatures, uniquely identifying files, and as checksums to detect accidental data corruption.
 
 depending on the input "inputmode" different inputformats are used
-1   Message is used as Bytes
-2   Message is used as String
+
+	-1 Message is used as Bytes
+	-2 Message is used as String
 
 depending on the input "outputmode" different outputformats are available
-1   The digest ouput is the final hash value as bytes of H0 - H7 (Array [0..31] of Byte)
-2   The hexdigest output is the final hash value as a hexadecimal string of H0 - H7 (64 bytes string)
-3   Both 1 and 2
+
+	-1 The digest ouput is the final hash value as bytes of H0 - H7 (Array [0..31] of Byte)
+	-2 The hexdigest output is the final hash value as a hexadecimal string of H0 - H7 (64 bytes string)
+	-3 Both 1 and 2
+
+steps:
 
 	-Step 00: Initialize variables H0 - H7
 	-Step 01: Set constants
